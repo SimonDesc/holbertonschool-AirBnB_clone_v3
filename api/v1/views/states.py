@@ -44,38 +44,36 @@ def delete_state(id):
 @app_views.route("/states/", methods=["POST"], strict_slashes=False)
 def post_state():
     """add a state with the name, mandatory"""
-    try:
-        data = request.get_json()
-    except json.JSONDecodeError:
-        return jsonify(error="Not a JSON"), 400
 
-    obj = State()
-
-    try:
+    data = request.get_json()
+    if data is None:
+        return "Not a JSON\n", 400
+    elif "name" not in data:
+        return "Missing name\n", 400
+    else:
+        obj = State()
         obj.name = data["name"]
-    except KeyError:
-        return jsonify(error="Missing name"), 400
 
-    storage.new(obj)
-    storage.save()
-    return jsonify(obj.to_dict()), 201
+        storage.new(obj)
+        storage.save()
+        return jsonify(obj.to_dict()), 201
 
 
 @app_views.route("/states/<id>", methods=["PUT"], strict_slashes=False)
 def put_state(id):
     """PUT method with the id"""
-    try:
-        data = request.get_json()
-    except json.JSONDecodeError:
-        return jsonify(error="Not a JSON"), 400
 
     obj = storage.get(State, id)
+
     if obj is None:
         abort(404)
+    else:
+        data = request.get_json()
+        if data is None:
+            return "Not a JSON\n", 400
+        for key, value in data.items():
+            if key not in ["id", "created", "updated_at"]:
+                setattr(obj, key, value)
 
-    for key, value in data.items():
-        if key not in ["id", "created", "updated_at"]:
-            setattr(obj, key, value)
-
-    storage.save()
-    return jsonify(obj.to_dict()), 200
+        storage.save()
+        return jsonify(obj.to_dict()), 200
