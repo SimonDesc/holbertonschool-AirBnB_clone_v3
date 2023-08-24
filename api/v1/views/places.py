@@ -51,10 +51,8 @@ def delete_place(id):
         return jsonify({}), 200
 
 
-from flask import request, jsonify, abort
-
-
-@app_views.route("/cities/<city_id>/places", methods=["POST"], strict_slashes=False)
+@app_views.route("/cities/<city_id>/places", methods=["POST"],
+                 strict_slashes=False)
 def create_place(city_id):
     """Create a new Place and return it with status code 201"""
 
@@ -100,7 +98,8 @@ def update_place(id):
         if data is None:
             return "Not a JSON\n", 400
         for key, value in data.items():
-            if key not in ["id", "user_id", "city_id", "created_at", "updated_at"]:
+            if key not in ["id", "user_id", "city_id", "created_at",
+                           "updated_at"]:
                 setattr(obj, key, value)
 
         storage.save()
