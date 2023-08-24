@@ -9,18 +9,22 @@ from models.state import State
 from models.city import City
 
 
-@app_views.route("/states/<id>/cities", strict_slashes=False)
-def cities_of_states(id):
-    # Retrieves the list of all City objects of a State
-    dict_storage_city = storage.all(City)
-    list_city = []
-    for key, city in dict_storage_city.items():
-        if city.state_id == id:
-            list_city.append(storage.get(City, city.id).to_dict())
-    if not list_city:
+@app_views.route('/states/<state_id>/cities', strict_slashes=False)
+def get_cities_by_state(state_id):
+    """Retrieves the list of all City objects of a State"""
+    obj_state = storage.get(State, state_id)
+    if obj_state is None:
         abort(404)
 
-    return jsonify(list_city)
+    """Get the list of cities associated with the State object"""
+    city_list = obj_state.cities
+
+    city_dicts = []
+    """Convert each city to a dictionary"""
+    for city in city_list:
+        city_dicts.append(city.to_dict())
+
+    return jsonify(city_dicts), 200
 
 
 @app_views.route("/cities/<id>", strict_slashes=False)
