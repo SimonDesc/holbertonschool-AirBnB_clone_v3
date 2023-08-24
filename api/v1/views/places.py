@@ -16,11 +16,9 @@ def places(city_id):
     if obj_state is None:
         abort(404)
 
-    """Get the list of place associated with the State object"""
     place_list = obj_state.places
 
     place_dicts = []
-    """Convert each city to a dictionary"""
     for city in place_list:
         place_dicts.append(city.to_dict())
 
@@ -54,7 +52,6 @@ def delete_place(id):
                  strict_slashes=False)
 def create_place(city_id):
     """Create a new Place and return it with status code 201"""
-
     obj_city = storage.get(City, city_id)
     if obj_city is None:
         abort(404)
