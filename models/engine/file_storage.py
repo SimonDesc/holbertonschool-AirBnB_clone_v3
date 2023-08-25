@@ -12,8 +12,15 @@ from models.review import Review
 from models.state import State
 from models.user import User
 
-classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
+classes = {
+    "Amenity": Amenity,
+    "BaseModel": BaseModel,
+    "City": City,
+    "Place": Place,
+    "Review": Review,
+    "State": State,
+    "User": User,
+}
 
 
 class FileStorage:
@@ -45,13 +52,13 @@ class FileStorage:
         json_objects = {}
         for key in self.__objects:
             json_objects[key] = self.__objects[key].to_dict()
-        with open(self.__file_path, 'w') as f:
+        with open(self.__file_path, "w") as f:
             json.dump(json_objects, f)
 
     def reload(self):
         """deserializes the JSON file to __objects"""
         try:
-            with open(self.__file_path, 'r') as f:
+            with open(self.__file_path, "r") as f:
                 jo = json.load(f)
             for key in jo:
                 self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
@@ -61,7 +68,7 @@ class FileStorage:
     def delete(self, obj=None):
         """delete obj from __objects if it's inside"""
         if obj is not None:
-            key = obj.__class__.__name__ + '.' + obj.id
+            key = obj.__class__.__name__ + "." + obj.id
             if key in self.__objects:
                 del self.__objects[key]
 
@@ -70,13 +77,13 @@ class FileStorage:
         self.reload()
 
     def get(self, cls, id):
-            """A method to retrieve one object"""
-            dictionnary_object = self.__objects.items()
-            key_concat = cls.__name__ + "." + id
+        """A method to retrieve one object"""
+        dictionnary_object = self.__objects.items()
+        key_concat = cls.__name__ + "." + id
 
-            for key, value in dictionnary_object:
-                if key_concat == key:
-                    return value
+        for key, value in dictionnary_object:
+            if key_concat == key:
+                return value
 
     def count(self, cls=None):
         """A method to count the number of objects in storage"""
